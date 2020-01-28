@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Context from "./../Context";
 import App from "./../App";
@@ -6,9 +6,13 @@ import App from "./../App";
 import { shuffle, isWinnerMove } from "./../utils/methods";
 import { defaultCardDeck } from "./../utils/defaultSettings";
 
-export class AppContainer extends Component {
-    state = {
+export const  AppContainer = () => {
+    const [game, setGame] = useState({
         start: false,
+        winningPlayer: ""
+    });
+
+    const [player, setPlayer] = useState({
         player1: {
             isPlayerMove: true,
             hand: []
@@ -17,32 +21,27 @@ export class AppContainer extends Component {
             isPlayerMove: false,
             hand: []
         },
-        CardDeck: [],
-        cardBank: [],
-        winningPlayer: ""
-    };
+    });
 
-    componentDidMount() {
-        this.setState({CardDeck: shuffle(defaultCardDeck)});
-    };
+    const [CardDeck, setCardDeck] = useState([]);
+    const [cardBank, setCardBank] = useState([]);
 
-    componentDidUpdate(prevProps, prevState) {
-        const { start, CardDeck } = this.state;
+    useEffect(() => {
+        setCardDeck(shuffle(defaultCardDeck));
+    }, []);
 
-        if(prevState.start !== start) {
-            if(start) {
-                this.setState({
-                    winningPlayer: ""
-                });
-                this.distributionOfCards(CardDeck);
-            }
+    useEffect(() => {
+        if(game.start) {
+            setGame({ start: true, winningPlayer: "" });
+            distributionOfCards(CardDeck);
         }
-    }
+    }, [game.start]);
 
-    distributionOfCards = CardDeck => {
+    //distribution of cards to players
+    const distributionOfCards = CardDeck => {
         let theFirstPlayerHand = [];
         let theSecondPlayerHand = [];
-        let { player1, player2 } = this.state;
+        let { player1, player2 } = player;
 
         for(let i = CardDeck.length - 1; i >= 0; --i) {
             if(i % 2 !== 0) {
@@ -52,47 +51,54 @@ export class AppContainer extends Component {
             }
         }
 
-        this.setState({
+        setPlayer({
             player1: { ...player1, hand: player1.hand.concat(theFirstPlayerHand)},
-            player2: { ...player2, hand: player2.hand.concat(theSecondPlayerHand)},
-            CardDeck: []
-        })
+            player2: { ...player2, hand: player2.hand.concat(theSecondPlayerHand)}
+        });
+        setCardDeck([]);
     };
 
-    cardMove = playerHand => {
-        let copyCardBank = [...this.state.cardBank];
+    //card move
+    const cardMove = playerHand => {
+        let copyCardBank = [...cardBank];
         let currentCard = playerHand.pop();
+
         copyCardBank.push(currentCard);
+        setCardBank(copyCardBank);
 
-        this.setState({ cardBank: copyCardBank });
-
+        //check move on win
         if(isWinnerMove(currentCard, copyCardBank[copyCardBank.length - 2])) {
             setTimeout(() => {
-                this.setState({cardBank: []});
-            }, 1000);
+                setCardBank([]);
+            }, 500);
             return [...copyCardBank].concat(playerHand);
         }
 
         return playerHand
     };
 
-    setPlayerMove = (currentPlayer, nextPlayer, event) => {
+    const setPlayerMove = (currentPlayer, nextPlayer, event) => {
         event.preventDefault();
 
-        this.setState({
+        //player move
+        setPlayer({
             [currentPlayer]: {
                 isPlayerMove: false,
-                hand: this.cardMove(this.state[currentPlayer].hand)
+                hand: cardMove(player[currentPlayer].hand)
             },
             [nextPlayer]: {
-                ...this.state[nextPlayer],
+                ...player[nextPlayer],
                 isPlayerMove: true
             },
         });
 
-        if(!this.state[currentPlayer].hand.length) {
-            this.setState({
+        //clear state and show winner player
+        if(!player[currentPlayer].hand.length) {
+            setGame({
                 start: false,
+                winningPlayer: nextPlayer
+            });
+            setPlayer({
                 player1: {
                     isPlayerMove: true,
                     hand: []
@@ -100,29 +106,30 @@ export class AppContainer extends Component {
                 player2: {
                     isPlayerMove: false,
                     hand: []
-                },
-                cardBank: [],
-                CardDeck: shuffle(defaultCardDeck),
-                winningPlayer: nextPlayer
-            }, () => console.log(this.state))
+                }
+            });
+            setCardDeck(shuffle(defaultCardDeck));
+            setCardBank([]);
         }
     };
 
-    onShuffle = () => {
-        this.setState({ CardDeck: this.shuffle(this.state.CardDeck) })
+    // Make the context object
+    const state = {
+        ...game,
+        setGame,
+        ...player,
+        setPlayer,
+        CardDeck,
+        setCardDeck,
+        cardBank,
+        setCardBank,
+        setPlayerMove
     };
 
-    onStart = () => this.setState({ start: true });
+    return (
+        <Context.Provider value={ state }>
+            <App />
+        </Context.Provider>
+    );
 
-    render() {
-        return (
-            <Context.Provider value={ this.state }>
-                <App
-                    onShuffle={ this.onShuffle }
-                    onStart={ this.onStart }
-                    setPlayerMove={ this.setPlayerMove }
-                />
-            </Context.Provider>
-        );
-    }
-}
+};

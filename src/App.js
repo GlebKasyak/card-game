@@ -1,40 +1,34 @@
 import React, { useContext }  from 'react';
 import './App.css';
 
-import { CardBankContainer, CardDeckComponent, Nav, Player } from "./components";
+import { CardBankComponent, CardDeckComponent, Nav, Player } from "./components";
 import Context from "./Context";
 
-const App = ({ onShuffle, onStart, setPlayerMove }) => {
+const App = () => {
     const state = useContext(Context);
 
-   return (
+    return (
        <div className="App">
-           <Nav onShuffle={ onShuffle } onStart={ onStart } />
+           <Nav />
            <CardDeckComponent />
            { state.start &&
                <div className="players-container">
                    <Player
-                       playerName="player1"
-                       setPlayerMove={ state.player1.isPlayerMove
-                           ? setPlayerMove.bind(this, "player1", "player2")
-                           : () => {}
-                       }
+                       currentPlayer="player1"
+                       nextPlayer="player2"
                    />
                    <Player
-                       playerName="player2"
-                       setPlayerMove={ state.player2.isPlayerMove
-                           ? setPlayerMove.bind(this, "player2", "player1")
-                           : () => {}
-                       }
+                       currentPlayer="player2"
+                       nextPlayer="player1"
                    />
                </div>
            }
-           <CardBankContainer cardBank={ state.cardBank } />
+           <CardBankComponent />
            { !!state.winningPlayer &&
                 <h2 className="win-title">{ state.winningPlayer } won!!!</h2>
            }
        </div>
-   );
+    );
 };
 
 export default App;
