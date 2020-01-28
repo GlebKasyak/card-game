@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "4bbe76a0dd4170fcbe0c048c96af8aa7",
+    "revision": "e5318e42955a1290c316e051ca9c5621",
     "url": "/card-game/index.html"
   },
   {
-    "revision": "b93a99f2fc70e9a1eee9",
-    "url": "/card-game/static/css/main.54fd2d77.chunk.css"
+    "revision": "fac36f8d649988380270",
+    "url": "/card-game/static/css/main.bf82a9d4.chunk.css"
   },
   {
     "revision": "1c2edd93464d11fefed2",
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/card-game/static/js/2.ee0ac835.chunk.js.LICENSE"
   },
   {
-    "revision": "b93a99f2fc70e9a1eee9",
-    "url": "/card-game/static/js/main.19b0a1a2.chunk.js"
+    "revision": "fac36f8d649988380270",
+    "url": "/card-game/static/js/main.b5b717ce.chunk.js"
   },
   {
     "revision": "1c2ede4b3bc6ffe222d5",
