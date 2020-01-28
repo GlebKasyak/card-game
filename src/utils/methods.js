@@ -15,6 +15,8 @@ export const shuffle = CardDeck => {
 export const isWinnerMove = (currentCard, previousCard) => {
     if(currentCard === 6 && previousCard === "A") {
         return true
+    } else if(currentCard === "A" && previousCard === 6) {
+        return false
     } else if(cardWeight[currentCard] > cardWeight[previousCard]) {
         return true
     }

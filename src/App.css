@@ -12,11 +12,9 @@ body, html {
     background-size: cover;
 }
 
-
 .players-container {
-    height: 100vh;
+    height: calc(100vh - 40px);
 }
-
 
 .win-title {
     text-align: center;
