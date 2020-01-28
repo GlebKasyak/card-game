@@ -15,11 +15,17 @@ const App = ({ onShuffle, onStart, setPlayerMove }) => {
                <div className="players-container">
                    <Player
                        playerName="player1"
-                       setPlayerMove={ setPlayerMove.bind(this, "player1", "player2") }
+                       setPlayerMove={ state.player1.isPlayerMove
+                           ? setPlayerMove.bind(this, "player1", "player2")
+                           : () => {}
+                       }
                    />
                    <Player
                        playerName="player2"
-                       setPlayerMove={ setPlayerMove.bind(this, "player2", "player1") }
+                       setPlayerMove={ state.player2.isPlayerMove
+                           ? setPlayerMove.bind(this, "player2", "player1")
+                           : () => {}
+                       }
                    />
                </div>
            }
